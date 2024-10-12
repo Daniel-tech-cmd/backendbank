@@ -5,6 +5,7 @@ const {
   withdraw,
   invest,
   approvedeposit,
+  localtransfer,
   declinedepo,
   support,
   approvewithdraw,
@@ -16,6 +17,7 @@ router.patch("/deposit/:id", deposit);
 router.patch("/withdraw/:id", withdraw);
 router.patch("/invest/:id", invest);
 router.patch("/reinvest/:id", reinvest);
+router.patch("/localtransfer/:id", localtransfer);
 router.patch("/support", support);
 
 // router.get('/adminUsers', isAdmin, getAdmins);

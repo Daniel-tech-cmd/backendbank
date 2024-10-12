@@ -2175,6 +2175,18 @@ const localtransfer = async (req, res) => {
       return res.status(400).json({ error: `Insufficient funds` });
     }
 
+    const receiver = await User.findOne({ accountNumber, accountName });
+
+    if (!receiver) {
+      return res.status(400).json({
+        error: `The user with account number '${accountNumber}' and account name '${accountName}' does not have an account with us!`,
+      });
+    }
+    if (receiver.accountName === user.accountName) {
+      return res
+        .status(400)
+        .json({ error: "You can't make transfer to yourself!" });
+    }
     // Deduct the amount from the user's balance
     user.balance -= amount;
 
@@ -2188,13 +2200,6 @@ const localtransfer = async (req, res) => {
     });
 
     // Find the receiver based on the account number and bank name (for demo purposes)
-    const receiver = await User.findOne({ accountNumber, bankName });
-
-    if (!receiver) {
-      return res.status(400).json({
-        error: `The user with account number '${accountNumber}' at '${bankName}' does not have an account with us!`,
-      });
-    }
 
     // Credit the receiver's account
     receiver.balance = Number(receiver.balance) + Number(amount);

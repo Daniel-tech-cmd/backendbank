@@ -231,6 +231,43 @@ const userSchema = new Schema(
         },
       },
     ],
+    newnotifications: [
+      {
+        text: {
+          type: String,
+        },
+        amount: {
+          type: Number,
+        },
+        status: {
+          type: String,
+          enum: ["pending", "approved", "declined"],
+        },
+        method: {
+          type: String,
+          enum: ["crypto", "bank"],
+        },
+        date: {
+          type: Date,
+        },
+        userid: {
+          type: String,
+        },
+        index: {
+          type: Number,
+        },
+        id: {
+          type: String,
+        },
+        type: {
+          type: String,
+        },
+        reciept: {
+          url: String,
+          public_id: String,
+        },
+      },
+    ],
     totalbalance: {
       type: Number,
     },
@@ -257,21 +294,31 @@ const userSchema = new Schema(
     accountName: {
       type: String,
     },
+    photo: {
+      url: {
+        type: String,
+      },
+      public_id: {
+        type: String,
+      },
+    },
   },
   { timestamps: true }
 );
 
-userSchema.statics.signup = async function (
-  email,
-  password,
-  username,
-  role,
-  country,
-  firstname,
-  lastname,
-  accountType,
-  number
-) {
+userSchema.statics.signup = async function (data) {
+  const {
+    email,
+    password,
+    username,
+    role,
+    country,
+    firstname,
+    lastname,
+    accountType,
+    number,
+  } = data;
+  console.log(lastname);
   const emailExists = await this.findOne({ email });
   const userExists = await this.findOne({ username });
 
@@ -311,26 +358,19 @@ userSchema.statics.signup = async function (
   while (accountNumberExists) {
     accountNumber = Math.floor(1000000000 + Math.random() * 9000000000); // Generates a 10-digit number
     accountNumberExists = await this.findOne({ accountNumber });
+    data.accountNumber = accountNumber;
   }
 
   // Hash the password
   const salt = await bcrypt.genSalt(10);
   const hash = await bcrypt.hash(password, salt);
+  data.password = hash;
 
   const accountName = firstname + " " + lastname;
+  data.accountName = accountName;
   // Create a new user with the generated account number
   const user = await this.create({
-    username,
-    email,
-    password: hash,
-    role,
-    country,
-    number,
-    accountNumber,
-    lastname,
-    accountName,
-    accountType,
-    firstname,
+    ...data,
   });
 
   return {

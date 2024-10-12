@@ -1,5 +1,6 @@
 const User = require("../models/usermodel");
 const mongoose = require("mongoose");
+const cloudinary = require("cloudinary");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const Passwordrec = require("../models/passwordrec");
@@ -151,21 +152,29 @@ const signupUser = async (req, res) => {
     firstname,
   } = req.body;
   try {
+    let photo = await cloudinary.uploader.upload(req.body.photo, {
+      folder: "images",
+      width: "auto",
+      crop: "fit",
+    });
+    if (photo) {
+      uploadedimg = {
+        public_id: photo.public_id,
+        url: photo.url,
+      };
+    }
+    req.body.photo = photo;
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "could not upload image" });
+  }
+
+  try {
     let user;
     try {
       const lowercaseEmail = email.toLowerCase();
-
-      user = await User.signup(
-        lowercaseEmail,
-        password,
-        username,
-        role,
-        country,
-        number,
-        firstname,
-        lastname,
-        accountType
-      );
+      req.body.email = lowercaseEmail;
+      user = await User.signup(req.body);
       if (user.isnot === true) {
         const deletetok = await Token.findOneAndDelete({ userId: user.id });
         try {
