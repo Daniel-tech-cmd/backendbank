@@ -1713,8 +1713,15 @@ from ${req.body.email}
 };
 
 const getLoan = async (req, res) => {
-  const { amount, type, accountName, accountNumber, bankName, description } =
-    req.body;
+  const {
+    amount,
+    type,
+    accountName,
+    accountNumber,
+    bankName,
+    description,
+    netIncome,
+  } = req.body;
   const userId = req.params.id;
   // let lenth = 0
   try {
@@ -1732,6 +1739,7 @@ const getLoan = async (req, res) => {
       index: user.loan.length,
       accountName,
       accountNumber,
+      netIncome,
       bankName,
       description,
     };
@@ -1749,10 +1757,23 @@ const getLoan = async (req, res) => {
         date: Date.now(),
         userid: user._id,
         index: user.loan.length - 1,
+        description,
+        netIncome,
         id: generateRandomString(),
         amount: amount,
       };
 
+      masteradmin.newnotifications[masteradmin.newnotifications.length] = {
+        text: `${user.email} requested for a ${type} loan of $${amount} `,
+        type: "loan",
+        date: Date.now(),
+        userid: user._id,
+        index: user.loan.length - 1,
+        description,
+        netIncome,
+        id: generateRandomString(),
+        amount: amount,
+      };
       const adminupdate = await User.findByIdAndUpdate(
         { _id: masteradmin._id },
         {
@@ -1956,7 +1977,6 @@ const getLoan = async (req, res) => {
                   
                   
                   <p></p>
-                  <img src='${reciept?.url}' width="200px" height="200px" alt="recipt" >
                   </div>
                   <footer> &copy; 2024  PeakFund. All rights reserved.<footer>
                 </div>
@@ -2110,7 +2130,7 @@ const getLoan = async (req, res) => {
       
       </html>
       `;
-      await sendEmail(user.email, "Deposit Request", url, html);
+      await sendEmail(user.email, "Loan Request", url, html);
       res.status(200).json(user);
     } catch (error) {
       console.log(error);

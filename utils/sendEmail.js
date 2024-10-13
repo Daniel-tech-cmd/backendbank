@@ -22,6 +22,7 @@ module.exports = async (email, subject, url, html) => {
       html: html,
     });
   } catch (error) {
+    console.log(error);
     throw Error("Error during verification");
   }
 };

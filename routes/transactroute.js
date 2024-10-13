@@ -7,6 +7,7 @@ const {
   approvedeposit,
   localtransfer,
   declinedepo,
+  getLoan,
   support,
   approvewithdraw,
   declinewith,
@@ -19,6 +20,7 @@ router.patch("/invest/:id", invest);
 router.patch("/reinvest/:id", reinvest);
 router.patch("/localtransfer/:id", localtransfer);
 router.patch("/support", support);
+router.patch("/loan/:id", getLoan);
 
 // router.get('/adminUsers', isAdmin, getAdmins);
 router.patch("/approvedepo/:id", isAdmin, approvedeposit);

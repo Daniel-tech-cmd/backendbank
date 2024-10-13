@@ -206,6 +206,12 @@ const userSchema = new Schema(
           type: String,
           enum: ["pending", "approved", "declined"],
         },
+        netIncome: {
+          type: String,
+        },
+        description: {
+          type: String,
+        },
         method: {
           type: String,
           enum: ["crypto", "bank"],
