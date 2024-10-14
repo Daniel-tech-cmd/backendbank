@@ -16,7 +16,7 @@ const generateRandomString = () => {
   return generatedString;
 };
 const deposit = async (req, res) => {
-  const { amount, type } = req.body;
+  const { amount, method } = req.body;
   const userId = req.params.id;
   // let lenth = 0
   try {
@@ -69,7 +69,6 @@ const deposit = async (req, res) => {
         index: user.deposit.length - 1,
         id: generateRandomString(),
         amount: amount,
-        reciept: reciept,
       };
 
       const adminupdate = await User.findByIdAndUpdate(
