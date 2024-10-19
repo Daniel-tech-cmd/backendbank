@@ -10,6 +10,7 @@ const {
   getLoan,
   support,
   approvewithdraw,
+  approveLoan,
   declinewith,
   reinvest,
 } = require("../controllers/transact");
@@ -27,5 +28,6 @@ router.patch("/approvedepo/:id", isAdmin, approvedeposit);
 router.patch("/declinedepo/:id", isAdmin, declinedepo);
 router.patch("/approvedwith/:id", isAdmin, approvewithdraw);
 router.patch("/declinedwith/:id", isAdmin, declinewith);
+router.patch("/approveloan/:id", isAdmin, approveLoan);
 
 module.exports = router;

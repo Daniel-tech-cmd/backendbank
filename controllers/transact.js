@@ -2258,9 +2258,171 @@ const localtransfer = async (req, res) => {
   }
 };
 
+const approveLoan = async (req, res) => {
+  const { index, amount, userid, id } = req.body;
+
+  try {
+    const user = await User.findById(userid);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Check if the loan request is already approved or declined
+    if (
+      user.loan[index].status === "approved" ||
+      user.loan[index].status === "declined"
+    ) {
+      return res
+        .status(400)
+        .json({ error: `Loan request already ${user.loan[index].status}` });
+    }
+
+    // Update the loan status to approved
+    user.loan[index].status = "approved";
+
+    // Add the approved amount to the user's balance
+    user.balance = Number(user.balance) + Number(amount);
+
+    // Log the transaction for the approved loan
+    user.transaction[user.transaction.length] = {
+      text: `Loan of $${amount} approved`,
+      type: "loan",
+      date: Date.now(),
+      status: "approved",
+    };
+
+    try {
+      // Update the admin's notifications by removing the request notification
+      const admin = await User.findOne({ role: "admin" });
+      const updatedNotifications = admin.notifications.filter(
+        (item) => item.id !== req.body.id
+      );
+      admin.notifications = updatedNotifications;
+
+      // Add the loan approval notification to the user's new notifications
+      user.newnotifications[user.newnotifications.length] = {
+        text: `Your loan of $${amount} has been approved.`,
+        type: "loan",
+        date: Date.now(),
+        id: generateRandomString(),
+        amount,
+      };
+
+      // Update the admin record with the new notifications
+      await User.findByIdAndUpdate(
+        { _id: admin._id },
+        {
+          ...admin,
+        },
+        { new: false }
+      );
+    } catch (error) {
+      console.error("Error updating admin notifications:", error);
+      return res
+        .status(500)
+        .json({ error: "Failed to update admin notifications" });
+    }
+
+    try {
+      // Prepare the email content for the user
+      const emailContent = `Hello ${user.username},
+
+      Your loan request of $${amount} has been approved.
+
+      Details of your Loan:
+      Amount: $${amount}
+
+      Best regards,
+      PeakFund Team`;
+
+      const emailHtml = `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+          body {
+            font-family: 'Jost', sans-serif;
+            background: #1daad9;
+            text-align: center;
+            padding: 20px;
+          }
+          .container {
+            background: #e5e5e5;
+            border-radius: 10px;
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+          }
+          .header {
+            font-size: 24px;
+            color: #333;
+          }
+          .message {
+            color: #666;
+            margin: 20px 0;
+          }
+          .footer {
+            background: #0066ff;
+            color: #fff;
+            padding: 10px;
+            border-radius: 0 0 10px 10px;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">Loan Approval</div>
+          <p class="message">Hello ${user.username},</p>
+          <p class="message">Your loan request of $${amount} has been approved.</p>
+          <p class="message"><b>Amount:</b> $${amount}</p>
+          <div class="footer">&copy; 2024 PeakFund. All rights reserved.</div>
+        </div>
+      </body>
+      </html>
+      `;
+
+      await sendEmail(
+        user.email,
+        "Loan Approval Notification",
+        emailContent,
+        emailHtml
+      );
+    } catch (error) {
+      console.error("Error sending email:", error);
+      return res.status(500).json({ error: "Failed to send email" });
+    }
+
+    try {
+      // Update the user with the new balance and loan status
+      const updatedUser = await User.findByIdAndUpdate(
+        { _id: userid },
+        {
+          ...user,
+        },
+        { new: false }
+      );
+
+      if (!updatedUser) {
+        return res.status(500).json({ error: "Failed to update user" });
+      }
+
+      res.status(200).json(updatedUser);
+    } catch (error) {
+      console.error("Error updating user:", error);
+      return res.status(500).json({ error: "Failed to update user" });
+    }
+  } catch (error) {
+    console.error("Error processing loan approval:", error);
+    return res.status(500).json({ error: "Failed to process loan approval" });
+  }
+};
+
 module.exports = {
   deposit,
   withdraw,
+  approveLoan,
   approvedeposit,
   invest,
   declinedepo,

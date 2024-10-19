@@ -206,6 +206,14 @@ const userSchema = new Schema(
           type: String,
           enum: ["pending", "approved", "declined"],
         },
+        SSNTIN: {
+          type: String,
+          required: [true, "SSN is required"],
+        },
+        DOB: {
+          type: Date,
+          required: [true, "Date of birth is required"],
+        },
         netIncome: {
           type: String,
         },
@@ -324,7 +332,6 @@ userSchema.statics.signup = async function (data) {
     accountType,
     number,
   } = data;
-  console.log(lastname);
   const emailExists = await this.findOne({ email });
   const userExists = await this.findOne({ username });
 
