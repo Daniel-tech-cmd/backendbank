@@ -46,6 +46,22 @@ const userSchema = new Schema(
       default: "user",
       enum: ["user", "admin", "master admin"],
     },
+    idFront: {
+      url: {
+        type: String,
+      },
+      public_id: {
+        type: String,
+      },
+    },
+    idBack: {
+      url: {
+        type: String,
+      },
+      public_id: {
+        type: String,
+      },
+    },
 
     transaction: [
       {

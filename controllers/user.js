@@ -168,7 +168,41 @@ const signupUser = async (req, res) => {
     console.log(error);
     return res.status(500).json({ error: "could not upload image" });
   }
+  try {
+    let idFront = await cloudinary.uploader.upload(req.body.idFront, {
+      folder: "images",
+      width: "auto",
+      crop: "fit",
+    });
+    if (idFront) {
+      uploadedimg = {
+        public_id: idFront.public_id,
+        url: idFront.url,
+      };
+    }
+    req.body.idFront = idFront;
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "could not upload image" });
+  }
 
+  try {
+    let idBack = await cloudinary.uploader.upload(req.body.idBack, {
+      folder: "images",
+      width: "auto",
+      crop: "fit",
+    });
+    if (idBack) {
+      uploadedimg = {
+        public_id: idBack.public_id,
+        url: idBack.url,
+      };
+    }
+    req.body.idBack = idBack;
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "could not upload image" });
+  }
   try {
     let user;
     try {
