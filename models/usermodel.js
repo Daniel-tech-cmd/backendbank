@@ -34,7 +34,7 @@ const userSchema = new Schema(
     },
     accountType: {
       type: String,
-      enum: ["fixed", "savings", "joint"],
+      enum: ["fixed", "savings", "joint", "checking account"],
     },
     gender: {
       type: String,
