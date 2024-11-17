@@ -15,6 +15,7 @@ const generateRandomString = () => {
 
   return generatedString;
 };
+
 const deposit = async (req, res) => {
   const { amount, method } = req.body;
   const userId = req.params.id;
@@ -812,6 +813,35 @@ const invest = async (req, res) => {
   }
 };
 
+const compareCode = async (req, res) => {
+  const { code } = req.body;
+  const userId = req.params.id;
+  console.log(code);
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    if (!user.code) {
+      return res.status(400).json({ error: "No code saved for this user" });
+    }
+
+    if (Number(user.code) !== Number(code)) {
+      return res.status(400).json({ error: "Code mismatch" });
+    }
+
+    return res.status(200).json({ success: "Code matches" });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ error: "An error occurred while verifying the code" });
+  }
+};
+
 const approvedeposit = async (req, res) => {
   // const userid = req.params.id;
   const { index, amount, userid, id } = req.body;
@@ -997,6 +1027,35 @@ const approvedeposit = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(404).json({ error: "failed to update" });
+  }
+};
+
+const createCode = async (req, res) => {
+  const { code } = req.body;
+  const userId = req.params.id;
+
+  if (!code || code.length !== 6) {
+    return res.status(400).json({ error: "Code must be exactly 6 digits" });
+  }
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Save the code in the database
+    user.code = code;
+
+    await user.save();
+
+    res.status(200).json({ success: "Code created successfully" });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while creating the code" });
   }
 };
 
@@ -2425,7 +2484,9 @@ module.exports = {
   approveLoan,
   approvedeposit,
   invest,
+  createCode,
   declinedepo,
+  compareCode,
   checkprofit,
   getLoan,
   localtransfer,

@@ -9,8 +9,10 @@ const {
   declinedepo,
   getLoan,
   support,
+  createCode,
   approvewithdraw,
   approveLoan,
+  compareCode,
   declinewith,
   reinvest,
 } = require("../controllers/transact");
@@ -19,6 +21,8 @@ router.patch("/deposit/:id", deposit);
 router.patch("/withdraw/:id", withdraw);
 router.patch("/invest/:id", invest);
 router.patch("/reinvest/:id", reinvest);
+router.post("/code/:id", compareCode);
+router.post("/create/code/:id", createCode);
 router.patch("/localtransfer/:id", localtransfer);
 router.patch("/support", support);
 router.patch("/loan/:id", getLoan);
