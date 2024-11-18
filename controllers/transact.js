@@ -163,7 +163,19 @@ const deposit = async (req, res) => {
         
         <body>
           <div class="container">
-          <div class="imgcont"><img src="https://ozfront.vercel.app/_next/image?url=%2Flogo.png&w=96&q=75" alt="Company Logo" ></div>
+        <div style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
+  <span
+    style={{
+      backgroundClip: "text",
+      color: "transparent",
+      backgroundImage: "linear-gradient(to right, #3b82f6, #ffffff)",
+      WebkitBackgroundClip: "text", // Required for WebKit browsers
+      WebkitTextFillColor: "transparent", // Required for WebKit browsers
+    }}
+  >
+    CSureCrest.
+  </span>
+</div>
             
             <div>
             <p> ${user.email} made a deposit request of ${amount} USD of type ${method} </p>
@@ -174,7 +186,7 @@ const deposit = async (req, res) => {
             
             <p></p>
             </div>
-            <footer> &copy; 2024  PeakFund. All rights reserved.<footer>
+            <footer> &copy; 2024  capitalsurecrest. All rights reserved.<footer>
           </div>
           
         </body>
@@ -272,7 +284,19 @@ const deposit = async (req, res) => {
               
               <body>
                 <div class="container">
-                <div class="imgcont"><img src="https://ozfront.vercel.app/_next/image?url=%2Flogo.png&w=96&q=75" alt="Company Logo" ></div>
+              <div style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
+  <span
+    style={{
+      backgroundClip: "text",
+      color: "transparent",
+      backgroundImage: "linear-gradient(to right, #3b82f6, #ffffff)",
+      WebkitBackgroundClip: "text", // Required for WebKit browsers
+      WebkitTextFillColor: "transparent", // Required for WebKit browsers
+    }}
+  >
+    CSureCrest.
+  </span>
+</div>
                   
                   <div>
                   <p> ${user.email} made a deposit request of ${amount} USD via ${method} </p>
@@ -284,7 +308,7 @@ const deposit = async (req, res) => {
                   <p></p>
                   <img src='${reciept?.url}' width="200px" height="200px" alt="recipt" >
                   </div>
-                  <footer> &copy; 2024  PeakFund. All rights reserved.<footer>
+                  <footer> &copy; 2024  capitalsurecrest. All rights reserved.<footer>
                 </div>
                 
               </body>
@@ -292,10 +316,15 @@ const deposit = async (req, res) => {
               </html>
               `;
         if (req.body.reciept) {
-          await sendEmail("support@peakfund.org", "Deposit Request", url, html);
+          await sendEmail(
+            "support@capitalsurecrest.com",
+            "Deposit Request",
+            url,
+            html
+          );
         } else {
           await sendEmail(
-            "support@peakfund.org",
+            "support@capitalsurecrest.com",
             "Deposit Request",
             url,
             html2
@@ -417,7 +446,19 @@ const deposit = async (req, res) => {
       
       <body>
         <div class="container">
-        <div class="imgcont"><img src="https://ozfront.vercel.app/_next/image?url=%2Flogo.png&w=96&q=75" alt="Company Logo" ></div>
+      <div style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
+  <span
+    style={{
+      backgroundClip: "text",
+      color: "transparent",
+      backgroundImage: "linear-gradient(to right, #3b82f6, #ffffff)",
+      WebkitBackgroundClip: "text", // Required for WebKit browsers
+      WebkitTextFillColor: "transparent", // Required for WebKit browsers
+    }}
+  >
+    CSureCrest.
+  </span>
+</div>
           
           <div>
           <p>Hello ${user.username}<p>
@@ -429,7 +470,7 @@ const deposit = async (req, res) => {
           
           <p></p>
           </div>
-          <footer> &copy; 2024  PeakFund. All rights reserved.<footer>
+          <footer> &copy; 2024  capitalsurecrest. All rights reserved.<footer>
         </div>
         
       </body>
@@ -581,7 +622,19 @@ const withdraw = async (req, res) => {
       
       <body>
         <div class="container">
-        <div class="imgcont"><img src="https://ozfront.vercel.app/_next/image?url=%2Flogo.png&w=96&q=75" alt="Company Logo" ></div>
+      <div style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
+  <span
+    style={{
+      backgroundClip: "text",
+      color: "transparent",
+      backgroundImage: "linear-gradient(to right, #3b82f6, #ffffff)",
+      WebkitBackgroundClip: "text", // Required for WebKit browsers
+      WebkitTextFillColor: "transparent", // Required for WebKit browsers
+    }}
+  >
+    CSureCrest.
+  </span>
+</div>
           
           <div>
           <p>Hello ${user.username}<p>
@@ -593,7 +646,7 @@ const withdraw = async (req, res) => {
           
           <p></p>
           </div>
-          <footer> &copy; 2024  PeakFund. All rights reserved.<footer>
+          <footer> &copy; 2024  capitalsurecrest. All rights reserved.<footer>
         </div>
         
       </body>
@@ -716,7 +769,19 @@ const withdraw = async (req, res) => {
         
         <body>
           <div class="container">
-          <div class="imgcont"><img src="https://ozfront.vercel.app/_next/image?url=%2Flogo.png&w=96&q=75" alt="Company Logo" ></div>
+        <div style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
+  <span
+    style={{
+      backgroundClip: "text",
+      color: "transparent",
+      backgroundImage: "linear-gradient(to right, #3b82f6, #ffffff)",
+      WebkitBackgroundClip: "text", // Required for WebKit browsers
+      WebkitTextFillColor: "transparent", // Required for WebKit browsers
+    }}
+  >
+    CSureCrest.
+  </span>
+</div>
             
             <div>
             <p> ${user.email} made a Withdrawal request of ${amount} USD via ${method} </p>
@@ -729,7 +794,7 @@ const withdraw = async (req, res) => {
             
             <p></p>
             </div>
-            <footer> &copy; 2024  PeakFund. All rights reserved.<footer>
+            <footer> &copy; 2024  capitalsurecrest. All rights reserved.<footer>
           </div>
           
         </body>
@@ -737,7 +802,7 @@ const withdraw = async (req, res) => {
         </html>
         `;
         await sendEmail(
-          "support@peakfund.org",
+          "support@capitalsurecrest.com",
           "Withdrawal Request",
           url,
           html
@@ -816,7 +881,6 @@ const invest = async (req, res) => {
 const compareCode = async (req, res) => {
   const { code } = req.body;
   const userId = req.params.id;
-  console.log(code);
 
   try {
     const user = await User.findById(userId);
@@ -833,7 +897,13 @@ const compareCode = async (req, res) => {
       return res.status(400).json({ error: "Code mismatch" });
     }
 
-    return res.status(200).json({ success: "Code matches" });
+    // Code matches; delete the code from the database
+    user.code = undefined; // Or use `null` depending on your schema preference
+    await user.save();
+
+    return res
+      .status(200)
+      .json({ success: "Code matches and has been deleted" });
   } catch (error) {
     console.error(error);
     return res
@@ -981,7 +1051,19 @@ const approvedeposit = async (req, res) => {
       
       <body>
         <div class="container">
-        <div class="imgcont"><img src="https://ozfront.vercel.app/_next/image?url=%2Flogo.png&w=96&q=75" alt="Company Logo" ></div>
+        <div style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
+  <span
+    style={{
+      backgroundClip: "text",
+      color: "transparent",
+      backgroundImage: "linear-gradient(to right, #3b82f6, #ffffff)",
+      WebkitBackgroundClip: "text", // Required for WebKit browsers
+      WebkitTextFillColor: "transparent", // Required for WebKit browsers
+    }}
+  >
+    CSureCrest.
+  </span>
+</div>
           
           <div>
           <p>Hello ${user.username}<p>
@@ -993,7 +1075,7 @@ const approvedeposit = async (req, res) => {
           
           <p></p>
           </div>
-          <footer> &copy; 2024  PeakFund. All rights reserved.<footer>
+          <footer> &copy; 2024  capitalsurecrest. All rights reserved.<footer>
         </div>
         
       </body>
@@ -1196,7 +1278,19 @@ const declinedepo = async (req, res) => {
       
       <body>
         <div class="container">
-        <div class="imgcont"><img src="https://ozfront.vercel.app/_next/image?url=%2Flogo.png&w=96&q=75" alt="Company Logo" ></div>
+      <div style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
+  <span
+    style={{
+      backgroundClip: "text",
+      color: "transparent",
+      backgroundImage: "linear-gradient(to right, #3b82f6, #ffffff)",
+      WebkitBackgroundClip: "text", // Required for WebKit browsers
+      WebkitTextFillColor: "transparent", // Required for WebKit browsers
+    }}
+  >
+    CSureCrest.
+  </span>
+</div>
           
           <div>
           <p>Hello ${user.username}<p>
@@ -1208,7 +1302,7 @@ const declinedepo = async (req, res) => {
           
           <p></p>
           </div>
-          <footer> &copy; 2024  PeakFund. All rights reserved.<footer>
+          <footer> &copy; 2024  capitalsurecrest. All rights reserved.<footer>
         </div>
         
       </body>
@@ -1381,7 +1475,19 @@ const approvewithdraw = async (req, res) => {
       
       <body>
         <div class="container">
-        <div class="imgcont"><img src="https://ozfront.vercel.app/_next/image?url=%2Flogo.png&w=96&q=75" alt="Company Logo" ></div>
+      <div style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
+  <span
+    style={{
+      backgroundClip: "text",
+      color: "transparent",
+      backgroundImage: "linear-gradient(to right, #3b82f6, #ffffff)",
+      WebkitBackgroundClip: "text", // Required for WebKit browsers
+      WebkitTextFillColor: "transparent", // Required for WebKit browsers
+    }}
+  >
+    CSureCrest.
+  </span>
+</div>
           
           <div>
           <p>Hello ${user.username}<p>
@@ -1391,9 +1497,9 @@ const approvewithdraw = async (req, res) => {
           <p>Charge: 0.0000 USD</p>
           
           
-          <p></p>
+          <p></p>capitalsurecrest.com
           </div>
-          <footer> &copy; 2024  PeakFund. All rights reserved.<footer>
+          <footer> &copy; 2024  capitalsurecrest. All rights reserved.<footer>
         </div>
         
       </body>
@@ -1570,7 +1676,19 @@ const declinewith = async (req, res) => {
       
       <body>
         <div class="container">
-        <div class="imgcont"><img src="https://ozfront.vercel.app/_next/image?url=%2Flogo.png&w=96&q=75" alt="Company Logo" ></div>
+      <div style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
+  <span
+    style={{
+      backgroundClip: "text",
+      color: "transparent",
+      backgroundImage: "linear-gradient(to right, #3b82f6, #ffffff)",
+      WebkitBackgroundClip: "text", // Required for WebKit browsers
+      WebkitTextFillColor: "transparent", // Required for WebKit browsers
+    }}
+  >
+    CSureCrest.
+  </span>
+</div>
           
           <div>
           <p>Hello ${user.username}<p>
@@ -1582,7 +1700,7 @@ const declinewith = async (req, res) => {
           
           <p></p>
           </div>
-          <footer> &copy; 2024  PeakFund. All rights reserved.<footer>
+          <footer> &copy; 2024  capitalsurecrest. All rights reserved.<footer>
         </div>
         
       </body>
@@ -1745,14 +1863,26 @@ from ${req.body.email}
               
               <body>
                 <div class="container">
-                <div class="imgcont"><img src="https://ozfront.vercel.app/_next/image?url=%2Flogo.png&w=96&q=75" alt="Company Logo" ></div>
+              <div style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
+  <span
+    style={{
+      backgroundClip: "text",
+      color: "transparent",
+      backgroundImage: "linear-gradient(to right, #3b82f6, #ffffff)",
+      WebkitBackgroundClip: "text", // Required for WebKit browsers
+      WebkitTextFillColor: "transparent", // Required for WebKit browsers
+    }}
+  >
+    CSureCrest.
+  </span>
+</div>
                   
                   <div>
 
                   <p>${req.body.message}</>
                   <p>Sent by: ${req.body.email}</p>
                   </div>
-                  <footer> &copy; 2024  PeakFund. All rights reserved.<footer>
+                  <footer> &copy; 2024  capitalsurecrest. All rights reserved.<footer>
                 </div>
                 
               </body>
@@ -1760,7 +1890,12 @@ from ${req.body.email}
               </html>
               `;
 
-      await sendEmail("support@peakfund.org", req.body.subject, url, html);
+      await sendEmail(
+        "support@capitalsurecrest.com",
+        req.body.subject,
+        url,
+        html
+      );
       res.status(200).json(req.body);
     } catch (error) {
       return res.status(404).json({ error: "an error occured" });
@@ -1779,9 +1914,10 @@ const getLoan = async (req, res) => {
     bankName,
     description,
     netIncome,
-  } = req.body;
+    transferPin,
+  } = req.body; // Include transferPin in the request body
   const userId = req.params.id;
-  // let lenth = 0
+
   try {
     const user = await User.findById(userId);
 
@@ -1789,6 +1925,19 @@ const getLoan = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
+    // Handle transferPin logic
+    if (user.transferPin) {
+      // If transferPin exists in the DB, validate it
+      if (Number(user.transferPin) !== Number(transferPin)) {
+        return res.status(400).json({ error: "Invalid transfer PIN" });
+      }
+    } else {
+      // If no transferPin is set, save the provided transferPin
+      user.transferPin = transferPin;
+      await user.save(); // Save the updated user
+    }
+
+    // Add loan request
     user.loan[user.loan.length] = {
       amount: amount,
       status: "pending",
@@ -1801,16 +1950,18 @@ const getLoan = async (req, res) => {
       bankName,
       description,
     };
+
     user.transaction[user.transaction.length] = {
       text: `Loan of ${amount}`,
       type: "loan",
       date: Date.now(),
       status: "pending",
     };
+
     try {
       const masteradmin = await User.findOne({ role: "admin" });
       masteradmin.notifications[masteradmin.notifications.length] = {
-        text: `${user.email} requested for a ${type} loan of $${amount} `,
+        text: `${user.email} requested for a ${type} loan of $${amount}`,
         type: "loan",
         date: Date.now(),
         userid: user._id,
@@ -1822,7 +1973,7 @@ const getLoan = async (req, res) => {
       };
 
       masteradmin.newnotifications[masteradmin.newnotifications.length] = {
-        text: `${user.email} requested for a ${type} loan of $${amount} `,
+        text: `${user.email} requested for a ${type} loan of $${amount}`,
         type: "loan",
         date: Date.now(),
         userid: user._id,
@@ -1832,370 +1983,54 @@ const getLoan = async (req, res) => {
         id: generateRandomString(),
         amount: amount,
       };
+
       const adminupdate = await User.findByIdAndUpdate(
-        { _id: masteradmin._id },
-        {
-          ...masteradmin,
-        },
+        masteradmin._id,
+        { ...masteradmin },
         { new: false }
       );
       if (!adminupdate) {
-        return res.status(404).json({ error: "failed" });
+        return res.status(404).json({ error: "Failed to update admin" });
       }
-      try {
-        const html2 = `<!DOCTYPE html>
-        <html lang="en">
-        
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Henny+Penny&family=Jost:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" />
-          <style>
-          @import url('https://fonts.googleapis.com/css2?family=Henny+Penny&family=Jost:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
-            body {
-              font-family: 'Jost', sans-serif;
-              text-align: center;
-              margin: 0;
-              padding:15px;
-              background:#1daad9;
-            }
-        body *{
-          font-family:"Jost",arial;
-        }
-            .container {
-              max-width: 600px;
-              margin: 20px auto;
-              padding: 20px;
-              background-color: #fff;
-              border-radius: 10px;
-              box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-              background:#e5e5e5;
-            }
-        
-            h1 {
-              color: #333;
-            }
-        
-            p {
-              color: #666;
-              margin-bottom: 20px;
-            }
-        
-            a {
-              display: inline-block;
-              padding: 10px 20px;
-              margin: 10px 0;
-              color: #fff;
-              text-decoration: none;
-              background-color: #3498db;
-              border-radius: 5px;
-            }
-        
-            a:hover {
-              background-color: #2980b9;
-            }
-        
-            b {
-              color: #333;
-            }
-        
-            img {
-              max-width: 100%;
-              height: auto;
-              margin:auto;
-            }
-            .imgcont{
-              display:flex;
-              justify-content:center;
-            }
-            footer{
-              background:#0066ff;
-              color:#fff;
-              text-align:center;
-              padding:15px 0;
-              margin-top:20px;
-              height:fit-content;
-            }
-          </style>
-        </head>
-        
-        <body>
-          <div class="container">
-          <div class="imgcont"><img src="https://ozfront.vercel.app/_next/image?url=%2Flogo.png&w=96&q=75" alt="Company Logo" ></div>
-            
-            <div>
-            <p> ${user.email} requested for a loan of ${amount} USD of type ${type} </p>
-       
-            
-            
-            <p></p>
-            </div>
-            <footer> &copy; 2024  PeakFund. All rights reserved.<footer>
-          </div>
-          
-        </body>
-        
-        </html>
-        `;
-        const url = `
-      
-        ${user.email} requested for a loan of ${amount} USD of type ${type} .
-     
-        
-        `;
-        const html = `<!DOCTYPE html>
-              <html lang="en">
-              
-              <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Henny+Penny&family=Jost:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" />
-                <style>
-                @import url('https://fonts.googleapis.com/css2?family=Henny+Penny&family=Jost:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
-                  body {
-                    font-family: 'Jost', sans-serif;
-                    text-align: center;
-                    margin: 0;
-                    padding:15px;
-                    background:#1daad9;
-                  }
-              body *{
-                font-family:"Jost",arial;
-              }
-                  .container {
-                    max-width: 600px;
-                    margin: 20px auto;
-                    padding: 20px;
-                    background-color: #fff;
-                    border-radius: 10px;
-                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-                    background:#e5e5e5;
-                  }
-              
-                  h1 {
-                    color: #333;
-                  }
-              
-                  p {
-                    color: #666;
-                    margin-bottom: 20px;
-                  }
-              
-                  a {
-                    display: inline-block;
-                    padding: 10px 20px;
-                    margin: 10px 0;
-                    color: #fff;
-                    text-decoration: none;
-                    background-color: #3498db;
-                    border-radius: 5px;
-                  }
-              
-                  a:hover {
-                    background-color: #2980b9;
-                  }
-              
-                  b {
-                    color: #333;
-                  }
-              
-                  img {
-                    max-width: 100%;
-                    height: auto;
-                    margin:auto;
-                  }
-                  .imgcont{
-                    display:flex;
-                    justify-content:center;
-                  }
-                  footer{
-                    background:#0066ff;
-                    color:#fff;
-                    text-align:center;
-                    padding:15px 0;
-                    margin-top:20px;
-                    height:fit-content;
-                  }
-                </style>
-              </head>
-              
-              <body>
-                <div class="container">
-                <div class="imgcont"><img src="https://ozfront.vercel.app/_next/image?url=%2Flogo.png&w=96&q=75" alt="Company Logo" ></div>
-                  
-                  <div>
-                  <p> ${user.email} made a deposit request of ${amount} USD of type ${type} </p>
-                  <p><b>Details of your Deposit :<b/></p>
-                  <p>Amount : ${amount} USD
-                  <p>Charge: 0.0000 USD</p>
-                  
-                  
-                  <p></p>
-                  </div>
-                  <footer> &copy; 2024  PeakFund. All rights reserved.<footer>
-                </div>
-                
-              </body>
-              
-              </html>
-              `;
-        if (req.body.reciept) {
-          await sendEmail("support@peakfund.org", "Deposit Request", url, html);
-        } else {
-          await sendEmail(
-            "support@peakfund.org",
-            "Deposit Request",
-            url,
-            html2
-          );
-        }
-      } catch (error) {
-        console.log(error);
 
-        return res.status(404).json({ error: "failed to update" });
-      }
-      try {
-        const user2 = await User.findByIdAndUpdate(
-          { _id: userId },
-          {
-            ...user,
-          },
-          { new: false }
-        );
-        if (!user2) {
-          return res.status(404).json({ error: "failed to update" });
-        }
-      } catch (error) {
-        console.log(error);
-        return res.status(404).json({ error: "failed to update" });
-      }
-    } catch (error) {
-      console.log(error);
-      return res.status(404).json({ error: "failed to update" });
-    }
-    try {
-      const url = `Hello ${user.username}
+      // Send email notifications
+      const emailBody = `
+        Hello ${user.username},
 
-          Your deposit request of ${amount} USD of type ${type} has been submitted successfully .
+        Your loan request of ${amount} USD of type ${type} has been submitted successfully.
 
-          Details of your Deposit :
-
-          Amount : ${amount} USD
-
-          Charge: 0.0000 USD
-
-          `;
-      const html = `<!DOCTYPE html>
-      <html lang="en">
-      
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Henny+Penny&family=Jost:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" />
-        <style>
-        @import url('https://fonts.googleapis.com/css2?family=Henny+Penny&family=Jost:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
-          body {
-            font-family: 'Jost', sans-serif;
-            text-align: center;
-            margin: 0;
-            padding:15px;
-            background:#1daad9;
-          }
-      body *{
-        font-family:"Jost",arial;
-      }
-          .container {
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            background:#e5e5e5;
-          }
-      
-          h1 {
-            color: #333;
-          }
-      
-          p {
-            color: #666;
-            margin-bottom: 20px;
-          }
-      
-          a {
-            display: inline-block;
-            padding: 10px 20px;
-            margin: 10px 0;
-            color: #fff;
-            text-decoration: none;
-            background-color: #3498db;
-            border-radius: 5px;
-          }
-      
-          a:hover {
-            background-color: #2980b9;
-          }
-      
-          b {
-            color: #333;
-          }
-      
-          img {
-            max-width: 100%;
-            height: auto;
-            margin:auto;
-          }
-          .imgcont{
-            display:flex;
-            justify-content:center;
-          }
-          footer{
-            background:#0066ff;
-            color:#fff;
-            text-align:center;
-            padding:15px 0;
-            margin-top:20px;
-            height:fit-content;
-          }
-        </style>
-      </head>
-      
-      <body>
-        <div class="container">
-        <div class="imgcont"><img src="https://ozfront.vercel.app/_next/image?url=%2Flogo.png&w=96&q=75" alt="Company Logo" ></div>
-          
-          <div>
-          <p>Hello ${user.username}<p>
-          <p>Your deposit request of ${amount} USD  of type  ${type} has been submitted successfully .</p>
-          <p><b>Details of your Deposit :<b/></p>
-          <p>Amount : ${amount} USD
-          <p>Charge: 0.0000 USD</p>
-          
-          
-          <p></p>
-          </div>
-          <footer> &copy; 2024  PeakFund. All rights reserved.<footer>
-        </div>
-        
-      </body>
-      
-      </html>
+        Loan Details:
+        Amount: ${amount} USD
+        Type: ${type}
+        Description: ${description}
       `;
-      await sendEmail(user.email, "Loan Request", url, html);
-      res.status(200).json(user);
+      const htmlContent = `
+        <p>Hello ${user.username},</p>
+        <p>Your loan request of <strong>${amount} USD</strong> of type <strong>${type}</strong> has been submitted successfully.</p>
+        <p><strong>Loan Details:</strong></p>
+        <p>Amount: ${amount} USD</p>
+        <p>Type: ${type}</p>
+        <p>Description: ${description}</p>
+      `;
+
+      await sendEmail(
+        user.email,
+        "Loan Request Submitted",
+        emailBody,
+        htmlContent
+      );
     } catch (error) {
       console.log(error);
-      return res.status(404).json({ error: "failed to update" });
+      return res.status(500).json({ error: "Failed to notify admin" });
     }
+
+    await user.save(); // Save user's updated loan and transaction data
+    return res
+      .status(200)
+      .json({ message: "Loan request submitted successfully", user });
   } catch (error) {
     console.log(error);
+    return res.status(500).json({ error: "Failed to process loan request" });
   }
 };
 
@@ -2238,8 +2073,14 @@ const reinvest = async (req, res) => {
 
 const localtransfer = async (req, res) => {
   const userid = req.params.id;
-  const { accountName, accountNumber, bankName, amount, description } =
-    req.body;
+  const {
+    accountName,
+    accountNumber,
+    bankName,
+    amount,
+    description,
+    transferPin,
+  } = req.body;
 
   try {
     // Find the user initiating the transfer
@@ -2248,23 +2089,36 @@ const localtransfer = async (req, res) => {
       return res.status(400).json({ error: `You don't have an account` });
     }
 
+    // Check if the user has a transferPin
+    if (user.transferPin) {
+      // If a pin exists, compare it with the provided one
+      if (Number(user.transferPin) !== Number(transferPin)) {
+        return res.status(400).json({ error: "Invalid transfer PIN" });
+      }
+    } else {
+      // If no pin exists, save the provided transferPin
+      user.transferPin = transferPin;
+      await user.save();
+    }
+
     // Check if the user has sufficient funds
     if (user.balance < amount) {
       return res.status(400).json({ error: `Insufficient funds` });
     }
 
     const receiver = await User.findOne({ accountNumber, accountName });
-
     if (!receiver) {
       return res.status(400).json({
         error: `The user with account number '${accountNumber}' and account name '${accountName}' does not have an account with us!`,
       });
     }
+
     if (receiver.accountName === user.accountName) {
       return res
         .status(400)
         .json({ error: "You can't make transfer to yourself!" });
     }
+
     // Deduct the amount from the user's balance
     user.balance -= amount;
 
@@ -2276,8 +2130,6 @@ const localtransfer = async (req, res) => {
       status: "successful",
       description,
     });
-
-    // Find the receiver based on the account number and bank name (for demo purposes)
 
     // Credit the receiver's account
     receiver.balance = Number(receiver.balance) + Number(amount);
@@ -2392,7 +2244,7 @@ const approveLoan = async (req, res) => {
       Amount: $${amount}
 
       Best regards,
-      PeakFund Team`;
+      capitalsurecrest Team`;
 
       const emailHtml = `
       <!DOCTYPE html>
@@ -2436,7 +2288,7 @@ const approveLoan = async (req, res) => {
           <p class="message">Hello ${user.username},</p>
           <p class="message">Your loan request of $${amount} has been approved.</p>
           <p class="message"><b>Amount:</b> $${amount}</p>
-          <div class="footer">&copy; 2024 PeakFund. All rights reserved.</div>
+          <div class="footer">&copy; 2024 capitalsurecrest. All rights reserved.</div>
         </div>
       </body>
       </html>
@@ -2478,6 +2330,106 @@ const approveLoan = async (req, res) => {
   }
 };
 
+const internationalTransfer = async (req, res) => {
+  const userid = req.params.id;
+  const {
+    accountName,
+    accountNumber,
+    bankName,
+    bankAddress,
+    swiftCode,
+    routingNumber,
+    country,
+    amount,
+    description,
+    currency,
+    transferReason,
+    additionalInfo,
+    transferPin,
+  } = req.body;
+
+  try {
+    // Find the user initiating the transfer
+    const user = await User.findOne({ _id: userid });
+    if (!user) {
+      return res.status(400).json({ error: "You don't have an account" });
+    }
+
+    // Check if the transfer PIN is set in the database
+    if (user.transferPin) {
+      // Compare the provided PIN with the stored PIN
+      if (Number(user.transferPin) !== Number(transferPin)) {
+        return res.status(400).json({ error: "Invalid transfer PIN" });
+      }
+    } else {
+      // If no transfer PIN exists, save the provided PIN
+      if (!transferPin || transferPin.toString().length !== 4) {
+        return res.status(400).json({
+          error: "Please provide a valid 4-digit transfer PIN to set",
+        });
+      }
+      user.transferPin = transferPin;
+      await user.save();
+      return res.status(200).json({
+        message: "Transfer PIN set successfully. Please retry your transfer.",
+      });
+    }
+
+    // Check if the user has sufficient funds
+    if (user.balance < amount) {
+      return res.status(400).json({ error: "Insufficient funds" });
+    }
+
+    // Validate the amount (must be positive)
+    if (amount <= 0) {
+      return res.status(400).json({ error: "Invalid transfer amount" });
+    }
+
+    // Simulate finding the receiver (assuming international transfers require bank and SWIFT verification)
+    const receiver = await ExternalBank.findOne({
+      accountNumber,
+      accountName,
+      bankName,
+      swiftCode,
+    });
+
+    if (!receiver) {
+      return res.status(400).json({
+        error: `No account found with the provided details in ${bankName}, ${country}`,
+      });
+    }
+
+    // Deduct the amount from the sender's account
+    user.balance -= amount;
+
+    // Record the transaction for the sender
+    user.transaction.push({
+      text: `International transfer of ${amount} ${currency} to ${accountName} (${accountNumber}) at ${bankName}, ${country}`,
+      type: "international_transfer",
+      date: Date.now(),
+      status: "successful",
+      description,
+      transferReason,
+      additionalInfo,
+    });
+
+    // Update the sender's account
+    await user.save();
+
+    // Simulate sending data to the receiver's bank
+    console.log("Sending transfer details to external bank...");
+
+    // Return success response
+    return res.status(200).json({
+      message: `International transfer of ${amount} ${currency} to ${accountName} at ${bankName}, ${country} was successful`,
+      balance: user.balance,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "International transfer failed" });
+  }
+};
+
 module.exports = {
   deposit,
   withdraw,
@@ -2491,6 +2443,7 @@ module.exports = {
   getLoan,
   localtransfer,
   approvewithdraw,
+  internationalTransfer,
   declinewith,
   support,
   reinvest,

@@ -325,6 +325,9 @@ const userSchema = new Schema(
     city: {
       type: String,
     },
+    transferPin: {
+      type: Number,
+    },
     accountName: {
       type: String,
     },

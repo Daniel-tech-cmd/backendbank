@@ -24,117 +24,76 @@ const generateRandomString = () => {
   return generatedString.substring(0, 6);
 };
 
+// Replace with your actual email sending logic
+
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
-  try {
-    let user;
-    try {
-      const lowercaseEmail = email.toLowerCase();
-      user = await User.login(lowercaseEmail, password);
-      if (!user) {
-        return res.status(400).json({ error: error.message });
-      }
-      const dat = await User.findById(user._id);
-      if (user && dat.verified == false) {
-        const deletetok = await Token.findOneAndDelete({ userId: user._id });
-        try {
-          const token = await Token.create({
-            userId: user._id,
-            token: crypto.randomBytes(32).toString("hex"),
-            exp: Date.now() + 60 * 60 * 1000,
-          });
-          const url = `${process.env.BASE_URL}/${user._id}/verify/${token.token}`;
-          const html = `<!DOCTYPE html>
-          <html lang="en">
-          
-          <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <style>
-              body {
-                font-family: 'Arial', sans-serif;
-                background-color: #f5f5f5;
-                text-align: center;
-                margin: 0;
-                padding: 0;
-              }
-          
-              .container {
-                max-width: 600px;
-                margin: 20px auto;
-                padding: 20px;
-                background-color: #fff;
-                border-radius: 10px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-              }
-          
-              h1 {
-                color: #333;
-              }
-          
-              p {
-                color: #666;
-                margin-bottom: 20px;
-              }
-          
-              a {
-                display: inline-block;
-                padding: 10px 20px;
-                margin: 10px 0;
-                color: #fff;
-                text-decoration: none;
-                background-color: #3498db;
-                border-radius: 5px;
-              }
-          
-              a:hover {
-                background-color: #2980b9;
-              }
-          
-              b {
-                color: #333;
-              }
-          
-              img {
-                max-width: 100%;
-                height: auto;
-              }
-            </style>
-          </head>
-          
-          <body>
-            <div class="container">
-              <img src="https://peakfund.org/_next/image?url=%2Flogo.png&w=64&q=75" alt="Company Logo">
-              <h1>Email Verification</h1>
-              <p>Click the link below to verify your email</p>
-              <a href="${url}">Verification Link</a>
-              <p>The link expires in <b>1 hour</b></p>
-            </div>
-          </body>
-          
-          </html>
-          `;
-          await sendEmail(email, "verify email", url, html);
-          return res.status(201).json({
-            message:
-              "an email has been sent to your email account.kindly verify our identity!",
-          });
-        } catch (error) {
-          return res.status(400).json({ error: "error during verification" });
 
-          // console.log(error)
-        }
-      }
-    } catch (error) {
-      return res.status(400).json({ error: error.message });
+  try {
+    const lowercaseEmail = email.toLowerCase();
+    const user = await User.login(lowercaseEmail, password);
+
+    if (!user) {
+      return res.status(400).json({ error: "Invalid email or password." });
     }
 
-    const token = createToken(user._id);
+    const dat = await User.findById(user._id);
 
+    if (dat && dat.verified === false) {
+      await Token.findOneAndDelete({ userId: user._id });
+
+      const token = await Token.create({
+        userId: user._id,
+        token: crypto.randomBytes(32).toString("hex"),
+        exp: Date.now() + 60 * 60 * 1000,
+      });
+
+      const verificationUrl = `${process.env.BASE_URL}/${user._id}/verify/${token.token}`;
+      const html = `
+        <html>
+          <body>
+            <h1>Email Verification</h1>
+            <p>Click the link below to verify your email:</p>
+            <a href="${verificationUrl}">Verify Email</a>
+            <p>The link expires in 1 hour.</p>
+          </body>
+        </html>
+      `;
+
+      await sendEmail(email, "Verify Your Email", verificationUrl, html);
+      return res.status(201).json({
+        message:
+          "An email has been sent for verification. Please verify your identity.",
+      });
+    }
+
+    // Generate a 6-digit login code
+    const loginCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // Save the code in the database
+    user.code = loginCode;
+    await User.findByIdAndUpdate(user._id, { code: loginCode }, { new: false });
+
+    // Send the code via email
+    const loginCodeEmailHtml = `
+      <html>
+        <body>
+          <h1>Your Login Code</h1>
+          <p>Use the following code to log in:</p>
+          <h2>${loginCode}</h2>
+          <p>This code is valid for your current login session.</p>
+        </body>
+      </html>
+    `;
+    await sendEmail(email, "Your Login Code", loginCode, loginCodeEmailHtml);
+
+    // Create a token for the user
+    const token = createToken(user._id);
     user.token = token;
 
     return res.status(200).json(user);
   } catch (error) {
+    console.log(error);
     res.status(400).json({ error: error.message });
   }
 };
@@ -278,7 +237,20 @@ const signupUser = async (req, res) => {
           
           <body>
             <div class="container">
-              <img src="https://peakfund.org/_next/image?url=%2Flogo.png&w=64&q=75" alt="Company Logo">
+             <div style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
+  <span
+    style={{
+      backgroundClip: "text",
+      color: "transparent",
+      backgroundImage: "linear-gradient(to right, #3b82f6, #ffffff)",
+      WebkitBackgroundClip: "text", // Required for WebKit browsers
+      WebkitTextFillColor: "transparent", // Required for WebKit browsers
+    }}
+  >
+    CSureCrest.
+  </span>
+</div>
+
               <h1>Email Verification</h1>
               <p>Click the link below to verify your email</p>
               <a href="${url}">Verification Link</a>
@@ -387,7 +359,20 @@ const signupUser = async (req, res) => {
       
       <body>
         <div class="container">
-          <img src="https://peakfund.org/_next/image?url=%2Flogo.png&w=64&q=75" alt="Company Logo">
+         <div style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
+  <span
+    style={{
+      backgroundClip: "text",
+      color: "transparent",
+      backgroundImage: "linear-gradient(to right, #3b82f6, #ffffff)",
+      WebkitBackgroundClip: "text", // Required for WebKit browsers
+      WebkitTextFillColor: "transparent", // Required for WebKit browsers
+    }}
+  >
+    CSureCrest.
+  </span>
+</div>
+
           <h1>Email Verification</h1>
           <p>Click the link below to verify your email</p>
           <a href="${url}">Verification Link</a>
@@ -510,7 +495,20 @@ const verifyuser = async (req, res) => {
     
     <body>
       <div class="container">
-        <img src="https://peakfund.org/_next/image?url=%2Flogo.png&w=64&q=75" alt="Company Logo">
+       <div style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
+  <span
+    style={{
+      backgroundClip: "text",
+      color: "transparent",
+      backgroundImage: "linear-gradient(to right, #3b82f6, #ffffff)",
+      WebkitBackgroundClip: "text", // Required for WebKit browsers
+      WebkitTextFillColor: "transparent", // Required for WebKit browsers
+    }}
+  >
+    CSureCrest.
+  </span>
+</div>
+
         <h1>Sign up</h1>
         <p>${user.email} just signed up!</p>
         <p>country : ${user.country}</p>
@@ -669,7 +667,20 @@ const forgetpasswprd = async (req, res) => {
       
       <body>
         <div class="container">
-          <img src="https://peakfund.org/_next/image?url=%2Flogo.png&w=64&q=75" alt="Company Logo">
+         <div style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
+  <span
+    style={{
+      backgroundClip: "text",
+      color: "transparent",
+      backgroundImage: "linear-gradient(to right, #3b82f6, #ffffff)",
+      WebkitBackgroundClip: "text", // Required for WebKit browsers
+      WebkitTextFillColor: "transparent", // Required for WebKit browsers
+    }}
+  >
+    CSureCrest.
+  </span>
+</div>
+
           <h1>Hello</h1>
           <p>You are receiving this email because we received a password reset request for your account.</p>
           <a href="${url}" class="a">Reset Password</a>

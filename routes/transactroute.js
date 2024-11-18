@@ -13,6 +13,7 @@ const {
   approvewithdraw,
   approveLoan,
   compareCode,
+  internationalTransfer,
   declinewith,
   reinvest,
 } = require("../controllers/transact");
@@ -24,6 +25,7 @@ router.patch("/reinvest/:id", reinvest);
 router.post("/code/:id", compareCode);
 router.post("/create/code/:id", createCode);
 router.patch("/localtransfer/:id", localtransfer);
+router.post("/internationaltransfer/:id", internationalTransfer);
 router.patch("/support", support);
 router.patch("/loan/:id", getLoan);
 
