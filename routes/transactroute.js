@@ -12,12 +12,18 @@ const {
   createCode,
   approvewithdraw,
   approveLoan,
+  changePin,
   compareCode,
+  forgotPin,
   internationalTransfer,
+  validateResetToken,
   declinewith,
   reinvest,
 } = require("../controllers/transact");
 const { isAdmin } = require("../middleware/auth");
+router.get("/forgotpin/:id", forgotPin);
+router.get("/verify-reset-link/:id/:token", validateResetToken);
+
 router.patch("/deposit/:id", deposit);
 router.patch("/withdraw/:id", withdraw);
 router.patch("/invest/:id", invest);
@@ -28,6 +34,7 @@ router.patch("/localtransfer/:id", localtransfer);
 router.post("/internationaltransfer/:id", internationalTransfer);
 router.patch("/support", support);
 router.patch("/loan/:id", getLoan);
+router.patch("/changepin/:id", changePin);
 
 // router.get('/adminUsers', isAdmin, getAdmins);
 router.patch("/approvedepo/:id", isAdmin, approvedeposit);

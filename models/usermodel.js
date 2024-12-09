@@ -195,6 +195,12 @@ const userSchema = new Schema(
       // required: false,
       default: 0.0,
     },
+    resetToken: {
+      type: String,
+    },
+    resetTokenExpires: {
+      type: Date,
+    },
     referals: [
       {
         name: { type: String },

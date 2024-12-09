@@ -1141,6 +1141,49 @@ const createCode = async (req, res) => {
   }
 };
 
+const changePin = async (req, res) => {
+  const { currentPin, newPin, confirmNewPin } = req.body;
+  const userId = req.params.id;
+
+  // Validate inputs
+  if (!currentPin || !newPin || !confirmNewPin) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
+
+  if (newPin.length !== 4 || confirmNewPin.length !== 4) {
+    return res.status(400).json({ error: "PIN must be exactly 4 digits" });
+  }
+
+  if (newPin !== confirmNewPin) {
+    return res
+      .status(400)
+      .json({ error: "New PIN and Confirm PIN must match" });
+  }
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Check if the current PIN matches the one in the database
+    if (Number(user.transferPin) !== Number(currentPin)) {
+      return res.status(401).json({ error: "Current PIN is incorrect" });
+    }
+
+    // Update the PIN
+    user.transferPin = newPin;
+
+    await user.save();
+
+    res.status(200).json({ success: "PIN changed successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "An error occurred while changing the PIN" });
+  }
+};
+
 const declinedepo = async (req, res) => {
   const { id, amount, userid, index } = req.body;
 
@@ -2430,12 +2473,190 @@ const internationalTransfer = async (req, res) => {
   }
 };
 
+const forgotPin = async (req, res) => {
+  const { id } = req.params; // Extract user ID from request parameters
+
+  try {
+    // Find the user by ID
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    // Generate a unique token
+    const token = crypto.randomBytes(32).toString("hex");
+
+    // Save the token and expiration date to the user's account
+    user.resetToken = token;
+    user.resetTokenExpires = Date.now() + 3600000; // Token expires in 1 hour
+    await user.save();
+
+    // Generate the reset link
+    const resetLink = `${process.env.BASE_URL}/reset-pin/${user._id}/${token}`;
+
+    const emailBody = `
+        <html>
+          <head>
+            <style>
+              body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                background-color: #f9f9f9;
+                color: #333;
+              }
+              .container {
+                max-width: 600px;
+                margin: 20px auto;
+                background-color: #fff;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                overflow: hidden;
+              }
+              .header {
+                background-color: #0047ab;
+                color: #fff;
+                padding: 20px;
+                text-align: center;
+              }
+              .header h1 {
+                margin: 0;
+                font-size: 24px;
+              }
+              .content {
+                padding: 20px;
+                font-size: 16px;
+                line-height: 1.5;
+              }
+              .content a {
+                color: #0047ab;
+                text-decoration: none;
+                font-weight: bold;
+              }
+              .content a:hover {
+                text-decoration: underline;
+              }
+              .button-container {
+                text-align: center;
+                margin: 20px 0;
+              }
+              .reset-button {
+                background-color: #0047ab;
+                color: #fff;
+                padding: 10px 20px;
+                text-decoration: none;
+                font-size: 16px;
+                border-radius: 5px;
+                display: inline-block;
+                text-decoration: none
+              }
+                a{
+                color:#fff;
+                }
+              .reset-button:hover {
+                background-color: #003380;
+              }
+              .footer {
+                background-color: #f1f1f1;
+                padding: 10px 20px;
+                font-size: 14px;
+                text-align: center;
+                color: #555;
+              }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <div class="header">
+                <h1>Capital Surecrest</h1>
+              </div>
+              <div class="content">
+                <p>Dear ${user.username},</p>
+                <p>
+                  We received a request to reset your transfer PIN for your account with Capital Surecrest. If you initiated this request, please click the button below to set up a new transfer PIN:
+                </p>
+                <div class="button-container">
+                  <a href="${resetLink}" class="reset-button">Reset PIN</a>
+                </div>
+                <p>
+                  Alternatively, you can copy and paste the following link into your browser:
+                  <br />
+                  <a href="${resetLink}">${resetLink}</a>
+                </p>
+                <p>
+                  If you did not request a PIN reset, please ignore this email or contact our support team immediately.
+                </p>
+                <p>
+                  Thank you for choosing Capital Surecrest for your financial needs.
+                </p>
+              </div>
+              <div class="footer">
+                &copy; ${new Date().getFullYear()} Capital Surecrest. All rights reserved.
+                <br />
+                Visit us at <a href="https://capitalsurecrest.com">capitalsurecrest.com</a>
+              </div>
+            </div>
+          </body>
+        </html>
+      `;
+
+    await sendEmail(user.email, "Reset Transfer Pin", "Pin Reset", emailBody);
+
+    res.status(200).json({ success: "Reset link sent to your email." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "An error occurred. Please try again." });
+  }
+};
+
+const validateResetToken = async (req, res) => {
+  const { id, token } = req.params;
+
+  try {
+    // Validate the input
+    if (!id || !token) {
+      return res.status(400).json({ error: "ID and token are required." });
+    }
+
+    // Fetch the user from the database
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    // Check if the token matches
+    if (user.resetToken !== token) {
+      return res.status(400).json({ error: "Invalid or expired reset token." });
+    }
+
+    // Optionally, check if the token has expired
+    if (user.resetTokenExpires && Date.now() > user.resetTokenExpires) {
+      return res.status(400).json({ error: "Reset token has expired." });
+    }
+
+    // If valid, return success
+    return res
+      .status(200)
+      .json({ success: "Token is valid. Proceed with reset." });
+  } catch (error) {
+    console.error("Error validating token:", error);
+    return res.status(500).json({
+      error: "An error occurred while validating the reset token.",
+    });
+  }
+};
+
 module.exports = {
   deposit,
   withdraw,
   approveLoan,
   approvedeposit,
+  changePin,
   invest,
+  validateResetToken,
   createCode,
   declinedepo,
   compareCode,
@@ -2446,5 +2667,6 @@ module.exports = {
   internationalTransfer,
   declinewith,
   support,
+  forgotPin,
   reinvest,
 };
