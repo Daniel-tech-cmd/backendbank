@@ -2390,7 +2390,7 @@ const internationalTransfer = async (req, res) => {
     additionalInfo,
     transferPin,
   } = req.body;
-
+  console.log(transferPin);
   try {
     // Find the user initiating the transfer
     const user = await User.findOne({ _id: userid });
@@ -2401,7 +2401,7 @@ const internationalTransfer = async (req, res) => {
     // Check if the transfer PIN is set in the database
     if (user.transferPin) {
       // Compare the provided PIN with the stored PIN
-      if (Number(user.transferPin) !== Number(transferPin)) {
+      if (Number(user.transferPin) != Number(transferPin)) {
         return res.status(400).json({ error: "Invalid transfer PIN" });
       }
     } else {
