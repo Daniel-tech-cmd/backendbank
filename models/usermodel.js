@@ -42,7 +42,7 @@ const userSchema = new Schema(
     },
     gender: {
       type: String,
-      enum: ["male", "femail"],
+      enum: ["male", "female"],
     },
 
     role: {
@@ -66,7 +66,28 @@ const userSchema = new Schema(
         type: String,
       },
     },
-
+    card: [
+      {
+        name: {
+          type: String,
+        },
+        cardNumber: {
+          type: String,
+        },
+        ccv: {
+          type: String,
+        },
+        cardType: {
+          type: String,
+        },
+        valid: {
+          type: String,
+        },
+        expiry: {
+          type: String,
+        },
+      },
+    ],
     transaction: [
       {
         text: {

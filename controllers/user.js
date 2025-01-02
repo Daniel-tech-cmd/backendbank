@@ -767,6 +767,7 @@ const changepassword = async (req, res) => {
     return res.status(404).json({ error: "Invalid Link" });
   }
 };
+
 module.exports = {
   loginUser,
   changepassword,

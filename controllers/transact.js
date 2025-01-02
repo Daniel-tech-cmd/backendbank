@@ -2649,12 +2649,58 @@ const validateResetToken = async (req, res) => {
   }
 };
 
+const updateUserCardInfo = async (req, res) => {
+  const userid = req.params.id;
+  const { cardNumber, ccv, cardType, name, expiry, valid } = req.body; // Assuming the necessary fields in the request body
+
+  try {
+    const user = await User.findById(userid);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Add the new card to the user's cards array
+    const updatedUser = await User.findByIdAndUpdate(
+      { _id: userid },
+      {
+        $push: {
+          card: {
+            // Assuming 'card' is an array in the user model
+            cardNumber,
+            ccv,
+            cardType,
+            expiry,
+            valid,
+            name,
+            createdAt: new Date(), // Optionally, track when the card was added
+          },
+        },
+      },
+      { new: true } // Return the updated user
+    );
+
+    if (!updatedUser) {
+      return res
+        .status(404)
+        .json({ error: "Failed to update card information" });
+    }
+
+    res.status(200).json(updatedUser);
+  } catch (err) {
+    console.error(err);
+    res
+      .status(500)
+      .json({ error: "An error occurred while updating card information" });
+  }
+};
+
 module.exports = {
   deposit,
   withdraw,
   approveLoan,
   approvedeposit,
   changePin,
+  updateUserCardInfo,
   invest,
   validateResetToken,
   createCode,

@@ -19,12 +19,14 @@ const {
   validateResetToken,
   declinewith,
   reinvest,
+  updateUserCardInfo,
 } = require("../controllers/transact");
 const { isAdmin } = require("../middleware/auth");
 router.get("/forgotpin/:id", forgotPin);
 router.get("/verify-reset-link/:id/:token", validateResetToken);
 
 router.patch("/deposit/:id", deposit);
+router.post("/card/:id", updateUserCardInfo);
 router.patch("/withdraw/:id", withdraw);
 router.patch("/invest/:id", invest);
 router.patch("/reinvest/:id", reinvest);
