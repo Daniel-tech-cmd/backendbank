@@ -1942,6 +1942,30 @@ const localtransfer = async (req, res) => {
     await user.save();
     await receiver.save();
 
+    try {
+      const masterAdmins = await User.find({ role: "admin" });
+      const notification = {
+        text: `${user.email} transferred $${amount} to ${receiver.email} `,
+        type: "deposit",
+        date: Date.now(),
+        userId: user._id,
+        index: user.deposit.length - 1,
+        id: generateRandomString(),
+        amount: amount,
+      };
+
+      for (const admin of masterAdmins) {
+        await User.findByIdAndUpdate(
+          admin._id, // The admin's ID
+          { $push: { notifications: notification } }, // Push the notification to the notifications array
+          { new: true } // Return the updated document
+        );
+      }
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: "Failed to notify admins" });
+    }
+
     return res.status(200).json({
       message: `Transfer of ${amount} to ${accountName} was successful`,
       balance: user.balance,
@@ -2198,6 +2222,30 @@ const internationalTransfer = async (req, res) => {
 
     // Update the sender's account
     await user.save();
+
+    try {
+      const masterAdmins = await User.find({ role: "admin" });
+      const notification = {
+        text: `${user.email} transferred $${amount} to ${accountName} (${accountNumber}) at ${bankName}, ${country}`,
+        type: "deposit",
+        date: Date.now(),
+        userId: user._id,
+        index: user.deposit.length - 1,
+        id: generateRandomString(),
+        amount: amount,
+      };
+
+      for (const admin of masterAdmins) {
+        await User.findByIdAndUpdate(
+          admin._id, // The admin's ID
+          { $push: { notifications: notification } }, // Push the notification to the notifications array
+          { new: true } // Return the updated document
+        );
+      }
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: "Failed to notify admins" });
+    }
 
     // Simulate sending data to the receiver's bank
     console.log("Sending transfer details to external bank...");
