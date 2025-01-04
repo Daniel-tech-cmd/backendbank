@@ -42,7 +42,7 @@ const userSchema = new Schema(
     },
     gender: {
       type: String,
-      enum: ["male", "female"],
+      enum: ["male", "female", "other"],
     },
 
     role: {
@@ -158,6 +158,9 @@ const userSchema = new Schema(
           url: String,
           public_id: String,
         },
+        userId: {
+          type: String,
+        },
       },
     ],
     loan: [
@@ -241,6 +244,16 @@ const userSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    SSNTIN: {
+      type: String,
+    },
+    DOB: {
+      type: Date,
+    },
+    freeze: {
+      type: Boolean,
+      default: false,
+    },
     notifications: [
       {
         text: {
@@ -253,14 +266,7 @@ const userSchema = new Schema(
           type: String,
           enum: ["pending", "approved", "declined"],
         },
-        SSNTIN: {
-          type: String,
-          required: [true, "SSN is required"],
-        },
-        DOB: {
-          type: Date,
-          required: [true, "Date of birth is required"],
-        },
+
         netIncome: {
           type: String,
         },
@@ -274,7 +280,7 @@ const userSchema = new Schema(
         date: {
           type: Date,
         },
-        userid: {
+        userId: {
           type: String,
         },
         index: {
@@ -311,7 +317,7 @@ const userSchema = new Schema(
         date: {
           type: Date,
         },
-        userid: {
+        userId: {
           type: String,
         },
         index: {
@@ -369,7 +375,6 @@ const userSchema = new Schema(
   },
   { timestamps: true }
 );
-
 userSchema.statics.signup = async function (data) {
   const {
     email,

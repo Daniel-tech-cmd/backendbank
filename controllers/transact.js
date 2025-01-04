@@ -19,474 +19,120 @@ const generateRandomString = () => {
 const deposit = async (req, res) => {
   const { amount, method } = req.body;
   const userId = req.params.id;
-  // let lenth = 0
+
   try {
     const user = await User.findById(userId);
-
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
-    let reciept;
+
+    let receipt;
     try {
-      if (req.body.reciept) {
-        let photo = await cloudinary.uploader.upload(req.body.reciept, {
+      if (req.body.receipt) {
+        let photo = await cloudinary.uploader.upload(req.body.receipt, {
           folder: "images",
           width: "auto",
           crop: "fit",
         });
         if (photo) {
-          reciept = {
+          receipt = {
             public_id: photo.public_id,
             url: photo.url,
           };
         }
       }
     } catch (error) {
-      console.log(error);
-      return res.status(500).json({ error: "could not upload image" });
+      console.error(error);
+      return res.status(500).json({ error: "Could not upload image" });
     }
-    // const deposit = user.deposit;
-    user.deposit[user.deposit.length] = {
+
+    user.deposit.push({
       amount: amount,
       status: "pending",
       method: method,
       date: Date.now(),
       index: user.deposit.length,
-      reciept: reciept,
-    };
-    user.transaction[user.transaction.length] = {
-      text: `deposit of ${amount}`,
+      userId: user._id,
+      receipt: receipt,
+    });
+
+    user.transaction.push({
+      text: `Deposit of ${amount}`,
       type: "deposit",
       date: Date.now(),
       status: "pending",
-    };
+    });
+
+    // Notify all master admins
     try {
-      const masteradmin = await User.findOne({ role: "admin" });
-      masteradmin.notifications[masteradmin.notifications.length] = {
+      const masterAdmins = await User.find({ role: "admin" });
+      const notification = {
         text: `${user.email} deposited $${amount}`,
         type: "deposit",
         date: Date.now(),
-        userid: user._id,
+        userId: user._id,
         index: user.deposit.length - 1,
         id: generateRandomString(),
         amount: amount,
       };
 
-      const adminupdate = await User.findByIdAndUpdate(
-        { _id: masteradmin._id },
-        {
-          ...masteradmin,
-        },
-        { new: false }
-      );
-      if (!adminupdate) {
-        return res.status(404).json({ error: "failed" });
-      }
-      try {
-        const html2 = `<!DOCTYPE html>
-        <html lang="en">
-        
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Henny+Penny&family=Jost:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" />
-          <style>
-          @import url('https://fonts.googleapis.com/css2?family=Henny+Penny&family=Jost:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
-            body {
-              font-family: 'Jost', sans-serif;
-              text-align: center;
-              margin: 0;
-              padding:15px;
-              background:#1daad9;
-            }
-        body *{
-          font-family:"Jost",arial;
-        }
-            .container {
-              max-width: 600px;
-              margin: 20px auto;
-              padding: 20px;
-              background-color: #fff;
-              border-radius: 10px;
-              box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-              background:#e5e5e5;
-            }
-        
-            h1 {
-              color: #333;
-            }
-        
-            p {
-              color: #666;
-              margin-bottom: 20px;
-            }
-        
-            a {
-              display: inline-block;
-              padding: 10px 20px;
-              margin: 10px 0;
-              color: #fff;
-              text-decoration: none;
-              background-color: #3498db;
-              border-radius: 5px;
-            }
-        
-            a:hover {
-              background-color: #2980b9;
-            }
-        
-            b {
-              color: #333;
-            }
-        
-            img {
-              max-width: 100%;
-              height: auto;
-              margin:auto;
-            }
-            .imgcont{
-              display:flex;
-              justify-content:center;
-            }
-            footer{
-              background:#0066ff;
-              color:#fff;
-              text-align:center;
-              padding:15px 0;
-              margin-top:20px;
-              height:fit-content;
-            }
-          </style>
-        </head>
-        
-        <body>
-          <div class="container">
-        <div style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
-  <span
-    style={{
-      backgroundClip: "text",
-      color: "transparent",
-      backgroundImage: "linear-gradient(to right, #3b82f6, #ffffff)",
-      WebkitBackgroundClip: "text", // Required for WebKit browsers
-      WebkitTextFillColor: "transparent", // Required for WebKit browsers
-    }}
-  >
-    CSureCrest.
-  </span>
-</div>
-            
-            <div>
-            <p> ${user.email} made a deposit request of ${amount} USD of type ${method} </p>
-            <p><b>Details of your Deposit :<b/></p>
-            <p>Amount : ${amount} USD
-            <p>Charge: 0.0000 USD</p>
-            
-            
-            <p></p>
-            </div>
-            <footer> &copy; 2024  capitalsurecrest. All rights reserved.<footer>
-          </div>
-          
-        </body>
-        
-        </html>
-        `;
-        const url = `
-      
-        ${user.email} made a deposit request of ${amount} USD via ${method} .
-        
-        Details of your Deposit :
-        
-        Amount : ${amount} USD
-        
-        Charge: 0.0000 USD
-        
-        `;
-        const html = `<!DOCTYPE html>
-              <html lang="en">
-              
-              <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Henny+Penny&family=Jost:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" />
-                <style>
-                @import url('https://fonts.googleapis.com/css2?family=Henny+Penny&family=Jost:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
-                  body {
-                    font-family: 'Jost', sans-serif;
-                    text-align: center;
-                    margin: 0;
-                    padding:15px;
-                    background:#1daad9;
-                  }
-              body *{
-                font-family:"Jost",arial;
-              }
-                  .container {
-                    max-width: 600px;
-                    margin: 20px auto;
-                    padding: 20px;
-                    background-color: #fff;
-                    border-radius: 10px;
-                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-                    background:#e5e5e5;
-                  }
-              
-                  h1 {
-                    color: #333;
-                  }
-              
-                  p {
-                    color: #666;
-                    margin-bottom: 20px;
-                  }
-              
-                  a {
-                    display: inline-block;
-                    padding: 10px 20px;
-                    margin: 10px 0;
-                    color: #fff;
-                    text-decoration: none;
-                    background-color: #3498db;
-                    border-radius: 5px;
-                  }
-              
-                  a:hover {
-                    background-color: #2980b9;
-                  }
-              
-                  b {
-                    color: #333;
-                  }
-              
-                  img {
-                    max-width: 100%;
-                    height: auto;
-                    margin:auto;
-                  }
-                  .imgcont{
-                    display:flex;
-                    justify-content:center;
-                  }
-                  footer{
-                    background:#0066ff;
-                    color:#fff;
-                    text-align:center;
-                    padding:15px 0;
-                    margin-top:20px;
-                    height:fit-content;
-                  }
-                </style>
-              </head>
-              
-              <body>
-                <div class="container">
-              <div style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
-  <span
-    style={{
-      backgroundClip: "text",
-      color: "transparent",
-      backgroundImage: "linear-gradient(to right, #3b82f6, #ffffff)",
-      WebkitBackgroundClip: "text", // Required for WebKit browsers
-      WebkitTextFillColor: "transparent", // Required for WebKit browsers
-    }}
-  >
-    CSureCrest.
-  </span>
-</div>
-                  
-                  <div>
-                  <p> ${user.email} made a deposit request of ${amount} USD via ${method} </p>
-                  <p><b>Details of your Deposit :<b/></p>
-                  <p>Amount : ${amount} USD
-                  <p>Charge: 0.0000 USD</p>
-                  
-                  
-                  <p></p>
-                  <img src='${reciept?.url}' width="200px" height="200px" alt="recipt" >
-                  </div>
-                  <footer> &copy; 2024  capitalsurecrest. All rights reserved.<footer>
-                </div>
-                
-              </body>
-              
-              </html>
-              `;
-        if (req.body.reciept) {
-          await sendEmail(
-            "support@capitalsurecrest.com",
-            "Deposit Request",
-            url,
-            html
-          );
-        } else {
-          await sendEmail(
-            "support@capitalsurecrest.com",
-            "Deposit Request",
-            url,
-            html2
-          );
-        }
-      } catch (error) {
-        console.log(error);
-
-        return res.status(404).json({ error: "failed to update" });
-      }
-      try {
-        const user2 = await User.findByIdAndUpdate(
-          { _id: userId },
-          {
-            ...user,
-          },
-          { new: false }
+      for (const admin of masterAdmins) {
+        await User.findByIdAndUpdate(
+          admin._id, // The admin's ID
+          { $push: { notifications: notification } }, // Push the notification to the notifications array
+          { new: true } // Return the updated document
         );
-        if (!user2) {
-          return res.status(404).json({ error: "failed to update" });
-        }
-      } catch (error) {
-        console.log(error);
-        return res.status(404).json({ error: "failed to update" });
       }
     } catch (error) {
-      console.log(error);
-      return res.status(404).json({ error: "failed to update" });
+      console.error(error);
+      return res.status(500).json({ error: "Failed to notify admins" });
     }
+
+    // Save user deposit
     try {
-      const url = `Hello ${user.username}
+      await user.save();
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: "Failed to update user deposit" });
+    }
 
-          Your deposit request of ${amount} USD via ${method} has been submitted successfully .
-
-          Details of your Deposit :
-
-          Amount : ${amount} USD
-
-          Charge: 0.0000 USD
-
-          `;
-      const html = `<!DOCTYPE html>
-      <html lang="en">
-      
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Henny+Penny&family=Jost:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" />
-        <style>
-        @import url('https://fonts.googleapis.com/css2?family=Henny+Penny&family=Jost:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
-          body {
-            font-family: 'Jost', sans-serif;
-            text-align: center;
-            margin: 0;
-            padding:15px;
-            background:#1daad9;
-          }
-      body *{
-        font-family:"Jost",arial;
-      }
-          .container {
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            background:#e5e5e5;
-          }
-      
-          h1 {
-            color: #333;
-          }
-      
-          p {
-            color: #666;
-            margin-bottom: 20px;
-          }
-      
-          a {
-            display: inline-block;
-            padding: 10px 20px;
-            margin: 10px 0;
-            color: #fff;
-            text-decoration: none;
-            background-color: #3498db;
-            border-radius: 5px;
-          }
-      
-          a:hover {
-            background-color: #2980b9;
-          }
-      
-          b {
-            color: #333;
-          }
-      
-          img {
-            max-width: 100%;
-            height: auto;
-            margin:auto;
-          }
-          .imgcont{
-            display:flex;
-            justify-content:center;
-          }
-          footer{
-            background:#0066ff;
-            color:#fff;
-            text-align:center;
-            padding:15px 0;
-            margin-top:20px;
-            height:fit-content;
-          }
-        </style>
-      </head>
-      
-      <body>
-        <div class="container">
-      <div style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
-  <span
-    style={{
-      backgroundClip: "text",
-      color: "transparent",
-      backgroundImage: "linear-gradient(to right, #3b82f6, #ffffff)",
-      WebkitBackgroundClip: "text", // Required for WebKit browsers
-      WebkitTextFillColor: "transparent", // Required for WebKit browsers
-    }}
-  >
-    CSureCrest.
-  </span>
-</div>
-          
-          <div>
-          <p>Hello ${user.username}<p>
-          <p>Your deposit request of ${amount} USD  via  ${method} has been submitted successfully .</p>
-          <p><b>Details of your Deposit :<b/></p>
-          <p>Amount : ${amount} USD
-          <p>Charge: 0.0000 USD</p>
-          
-          
-          <p></p>
-          </div>
-          <footer> &copy; 2024  capitalsurecrest. All rights reserved.<footer>
-        </div>
+    // Send email notifications
+    try {
+      const emailContent = `
+        Hello ${user.username},
+        Your deposit request of ${amount} USD via ${method} has been submitted successfully.
         
-      </body>
-      
-      </html>
+        Details:
+        Amount: ${amount} USD
+        Charge: 0.0000 USD
       `;
-      await sendEmail(user.email, "Deposit Request", url, html);
+      const emailHtml = `
+        <div>
+          <h1>Deposit Request</h1>
+          <p>Hello ${user.username},</p>
+          <p>Your deposit request of <strong>${amount} USD</strong> via <strong>${method}</strong> has been submitted successfully.</p>
+          <p>Details:</p>
+          <ul>
+            <li>Amount: ${amount} USD</li>
+            <li>Charge: 0.0000 USD</li>
+          </ul>
+        </div>
+      `;
+
+      await sendEmail(user.email, "Deposit Request", emailContent, emailHtml);
       res.status(200).json(user);
     } catch (error) {
-      console.log(error);
-      return res.status(404).json({ error: "failed to update" });
+      console.error(error);
+      return res
+        .status(500)
+        .json({ error: "Failed to send email notification" });
     }
   } catch (error) {
-    console.log(error);
+    console.error(error.message);
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
+
 const withdraw = async (req, res) => {
   const userid = req.params.id;
   const { amount, wallet, password, method } = req.body;
@@ -914,22 +560,77 @@ const compareCode = async (req, res) => {
 
 const approvedeposit = async (req, res) => {
   // const userid = req.params.id;
-  const { index, amount, userid, id } = req.body;
+  const { index, amount, userId, id } = req.body;
+
+  console.log(req.body);
 
   try {
-    const user = await User.findById(userid);
+    const user = await User.findById(userId);
     if (!user) {
+      const admins = await User.findById(req.params.id);
+      const index = admins.notifications.findIndex(
+        (obj) => JSON.stringify(obj) === JSON.stringify(req.body)
+      );
+
+      const array = admins.notifications.filter(
+        (item) => item.id !== req.body.id
+      );
+      admins.notifications = array;
+      // admin.notifications.splice(index, 1);
+      const admin2 = await User.findByIdAndUpdate(
+        { _id: admins._id },
+        {
+          ...admins,
+        },
+        { new: false }
+      );
       return res.status(404).json({ error: "User not found" });
+    }
+    console.log(user.deposit);
+    console.log(index);
+    if (!user.deposit[index]) {
+      const admins = await User.findById(req.params.id);
+      const index = admins.notifications.findIndex(
+        (obj) => JSON.stringify(obj) === JSON.stringify(req.body)
+      );
+
+      const array = admins.notifications.filter(
+        (item) => item.id !== req.body.id
+      );
+      admins.notifications = array;
+      // admin.notifications.splice(index, 1);
+      const admin2 = await User.findByIdAndUpdate(
+        { _id: admins._id },
+        {
+          ...admins,
+        },
+        { new: false }
+      );
+      return res.status(400).json({ error: "Request Expired" });
     }
     if (
       user.deposit[index].status === "approved" ||
       user.deposit[index].status === "declined"
     ) {
-      return res
-        .status(404)
-        .json({ error: `Request already ${user.deposit[index].status}` });
+      const status = user.deposit[index].status;
+      const admins = await User.findById(req.params.id);
+
+      const array = admins.notifications.filter(
+        (item) => item.id !== req.body.id
+      );
+      admins.notifications = array;
+      // admin.notifications.splice(index, 1);
+      const admin2 = await User.findByIdAndUpdate(
+        { _id: admins._id },
+        {
+          ...admins,
+        },
+        { new: false }
+      );
+      return res.status(404).json({ error: `Request already ${status}` });
     }
-    // const deposit = user.deposit;
+
+    const deposit = user.deposit;
     (user.deposit[index].status = "approved"),
       (user.transaction[user.transaction.length] = {
         text: `deposit of $${amount} approved`,
@@ -938,20 +639,20 @@ const approvedeposit = async (req, res) => {
         status: "approved",
       });
     try {
-      const admin = await User.findOne({ role: "admin" });
-      const index = admin.notifications.findIndex(
+      const admins = await User.findById(req.params.id);
+      const index = admins.notifications.findIndex(
         (obj) => JSON.stringify(obj) === JSON.stringify(req.body)
       );
 
-      const array = admin.notifications.filter(
+      const array = admins.notifications.filter(
         (item) => item.id !== req.body.id
       );
-      admin.notifications = array;
+      admins.notifications = array;
       // admin.notifications.splice(index, 1);
       const admin2 = await User.findByIdAndUpdate(
-        { _id: admin._id },
+        { _id: admins._id },
         {
-          ...admin,
+          ...admins,
         },
         { new: false }
       );
@@ -1089,10 +790,9 @@ const approvedeposit = async (req, res) => {
     }
 
     user.balance = Number(user.balance) + Number(amount);
-
     try {
       const user2 = await User.findByIdAndUpdate(
-        { _id: userid },
+        { _id: userId },
         {
           ...user,
         },
