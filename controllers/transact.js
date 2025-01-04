@@ -305,24 +305,25 @@ const withdraw = async (req, res) => {
       return res.status(404).json({ error: "failed to update" });
     }
     try {
-      const masteradmin = await User.findOne({ role: "admin" });
-      masteradmin.notifications[masteradmin.notifications.length] = {
+      const masteradmin = await User.find({ role: "admin" });
+      const notification = {
         text: `${user.email} placed a withdrawal of $${amount}`,
         type: "withdraw",
         date: Date.now(),
-        userid: user._id,
+        userId: user._id,
         index: user.withdraw.length - 1,
         id: generateRandomString(),
         amount,
       };
 
-      const adminupdate = await User.findByIdAndUpdate(
-        { _id: masteradmin._id },
-        {
-          ...masteradmin,
-        },
-        { new: false }
-      );
+      for (const admin of masteradmin) {
+        await User.findByIdAndUpdate(
+          admin._id, // The admin's ID
+          { $push: { notifications: notification } }, // Push the notification to the notifications array
+          { new: true } // Return the updated document
+        );
+      }
+
       try {
         const url = `
       
@@ -457,9 +458,7 @@ const withdraw = async (req, res) => {
         console.log(error);
         return res.status(404).json({ error: "failed to update" });
       }
-      if (!adminupdate) {
-        return res.status(404).json({ error: "failed" });
-      }
+
       try {
         const user2 = await User.findByIdAndUpdate(
           { _id: userid },
@@ -561,8 +560,6 @@ const compareCode = async (req, res) => {
 const approvedeposit = async (req, res) => {
   // const userid = req.params.id;
   const { index, amount, userId, id } = req.body;
-
-  console.log(req.body);
 
   try {
     const user = await User.findById(userId);
@@ -885,10 +882,10 @@ const changePin = async (req, res) => {
 };
 
 const declinedepo = async (req, res) => {
-  const { id, amount, userid, index } = req.body;
+  const { id, amount, userId, index } = req.body;
 
   try {
-    const user = await User.findById(userid);
+    const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -896,6 +893,19 @@ const declinedepo = async (req, res) => {
       user.deposit[index].status === "approved" ||
       user.deposit[index].status === "declined"
     ) {
+      const admin = await User.findOne({ role: "admin" });
+
+      const array = admin.notifications.filter(
+        (item) => item.id !== req.body.id
+      );
+      admin.notifications = array;
+      const admin2 = await User.findByIdAndUpdate(
+        { _id: admin._id },
+        {
+          ...admin,
+        },
+        { new: false }
+      );
       return res
         .status(404)
         .json({ error: `Request already ${user.deposit[index].status}` });
@@ -1062,7 +1072,7 @@ const declinedepo = async (req, res) => {
 
     try {
       const user2 = await User.findByIdAndUpdate(
-        { _id: userid },
+        { _id: userId },
         {
           ...user,
         },
@@ -1082,17 +1092,49 @@ const declinedepo = async (req, res) => {
   }
 };
 const approvewithdraw = async (req, res) => {
-  const { id, amount, userid, index } = req.body;
+  const { id, amount, userId, index } = req.body;
 
   try {
-    const user = await User.findById(userid);
+    const user = await User.findById(userId);
     if (!user) {
+      const admins = await User.findById(req.params.id);
+      const index = admins.notifications.findIndex(
+        (obj) => JSON.stringify(obj) === JSON.stringify(req.body)
+      );
+
+      const array = admins.notifications.filter(
+        (item) => item.id !== req.body.id
+      );
+      admins.notifications = array;
+      // admin.notifications.splice(index, 1);
+      const admin2 = await User.findByIdAndUpdate(
+        { _id: admins._id },
+        {
+          ...admins,
+        },
+        { new: false }
+      );
+
       return res.status(404).json({ error: "User not found" });
     }
     if (
       user.withdraw[index]?.status === "approved" ||
       user.withdraw[index].status === "declined"
     ) {
+      const admins = await User.findById(req.params.id);
+
+      const array = admins.notifications.filter(
+        (item) => item.id !== req.body.id
+      );
+      admins.notifications = array;
+      // admin.notifications.splice(index, 1);
+      const admin2 = await User.findByIdAndUpdate(
+        { _id: admins._id },
+        {
+          ...admins,
+        },
+        { new: false }
+      );
       return res
         .status(404)
         .json({ error: `Request already ${user.withdraw[index].status}` });
@@ -1262,7 +1304,7 @@ const approvewithdraw = async (req, res) => {
 
     try {
       const user2 = await User.findByIdAndUpdate(
-        { _id: userid },
+        { _id: userId },
         {
           ...user,
         },
@@ -1283,10 +1325,10 @@ const approvewithdraw = async (req, res) => {
 };
 
 const declinewith = async (req, res) => {
-  const { id, amount, userid, index } = req.body;
+  const { id, amount, userId, index } = req.body;
 
   try {
-    const user = await User.findById(userid);
+    const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -1460,7 +1502,7 @@ const declinewith = async (req, res) => {
 
     try {
       const user2 = await User.findByIdAndUpdate(
-        { _id: userid },
+        { _id: userId },
         {
           ...user,
         },
