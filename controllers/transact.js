@@ -1858,14 +1858,8 @@ const reinvest = async (req, res) => {
 
 const localtransfer = async (req, res) => {
   const userid = req.params.id;
-  const {
-    accountName,
-    accountNumber,
-    bankName,
-    amount,
-    description,
-    transferPin,
-  } = req.body;
+  const { accountName, accountNumber, amount, description, transferPin } =
+    req.body;
 
   try {
     // Find the user initiating the transfer
@@ -1891,7 +1885,11 @@ const localtransfer = async (req, res) => {
       return res.status(400).json({ error: `Insufficient funds` });
     }
 
-    const receiver = await User.findOne({ accountNumber, accountName });
+    const receiver = await User.findOne({
+      accountNumber,
+      accountName: { $regex: new RegExp(`^${accountName}$`, "i") },
+    });
+
     if (!receiver) {
       return res.status(400).json({
         error: `The user with account number '${accountNumber}' and account name '${accountName}' does not have an account with us!`,
@@ -1909,7 +1907,7 @@ const localtransfer = async (req, res) => {
 
     // Record the transaction for the sender
     user.transaction.push({
-      text: `Transfer of ${amount} to ${accountName} (${accountNumber}) at ${bankName}`,
+      text: `Transfer of ${amount} to ${accountName} (${accountNumber})`,
       type: "transfer",
       date: Date.now(),
       status: "successful",
@@ -1945,7 +1943,7 @@ const localtransfer = async (req, res) => {
     await receiver.save();
 
     return res.status(200).json({
-      message: `Transfer of ${amount} to ${accountName} at ${bankName} was successful`,
+      message: `Transfer of ${amount} to ${accountName} was successful`,
       balance: user.balance,
     });
   } catch (error) {
@@ -2132,7 +2130,6 @@ const internationalTransfer = async (req, res) => {
     additionalInfo,
     transferPin,
   } = req.body;
-  console.log(transferPin);
   try {
     // Find the user initiating the transfer
     const user = await User.findOne({ _id: userid });
@@ -2143,7 +2140,8 @@ const internationalTransfer = async (req, res) => {
     // Check if the transfer PIN is set in the database
     if (user.transferPin) {
       // Compare the provided PIN with the stored PIN
-      if (Number(user.transferPin) != Number(transferPin)) {
+      if (Number(user.transferPin) !== Number(transferPin)) {
+        console.log(user.transferPin, transferPin);
         return res.status(400).json({ error: "Invalid transfer PIN" });
       }
     } else {
@@ -2171,18 +2169,18 @@ const internationalTransfer = async (req, res) => {
     }
 
     // Simulate finding the receiver (assuming international transfers require bank and SWIFT verification)
-    const receiver = await ExternalBank.findOne({
-      accountNumber,
-      accountName,
-      bankName,
-      swiftCode,
-    });
+    // const receiver = await ExternalBank.findOne({
+    //   accountNumber,
+    //   accountName,
+    //   bankName,
+    //   swiftCode,
+    // });
 
-    if (!receiver) {
-      return res.status(400).json({
-        error: `No account found with the provided details in ${bankName}, ${country}`,
-      });
-    }
+    // if (!receiver) {
+    //   return res.status(400).json({
+    //     error: `No account found with the provided details in ${bankName}, ${country}`,
+    //   });
+    // }
 
     // Deduct the amount from the sender's account
     user.balance -= amount;
@@ -2206,7 +2204,7 @@ const internationalTransfer = async (req, res) => {
 
     // Return success response
     return res.status(200).json({
-      message: `International transfer of ${amount} ${currency} to ${accountName} at ${bankName}, ${country} was successful`,
+      message: `International transfer of ${currency}${amount}  to ${accountName} at ${bankName}, ${country} was successful`,
       balance: user.balance,
     });
   } catch (error) {
