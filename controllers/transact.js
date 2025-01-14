@@ -1992,7 +1992,7 @@ const localtransfer = async (req, res) => {
             </div>
             <div class="content">
               <p>Dear ${user.username},</p>
-              <p>Your transfer of ${amount} to ${accountName} (${accountNumber}) was successful.</p>
+              <p>Your transfer of $${amount} to ${accountName} (${accountNumber}) was successful.</p>
               <p>Thank you for choosing Capital Surecrest.</p>
             </div>
             <div class="footer">
@@ -2056,7 +2056,7 @@ const localtransfer = async (req, res) => {
             </div>
             <div class="content">
               <p>Dear ${receiver.username},</p>
-              <p>You have received ${amount} from ${user.email}.</p>
+              <p>You have received $${amount} from ${user.email}.</p>
               <p>Thank you for choosing Capital Surecrest.</p>
             </div>
             <div class="footer">
