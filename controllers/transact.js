@@ -1870,12 +1870,10 @@ const localtransfer = async (req, res) => {
 
     // Check if the user has a transferPin
     if (user.transferPin) {
-      // If a pin exists, compare it with the provided one
       if (Number(user.transferPin) !== Number(transferPin)) {
         return res.status(400).json({ error: "Invalid transfer PIN" });
       }
     } else {
-      // If no pin exists, save the provided transferPin
       user.transferPin = transferPin;
       await user.save();
     }
@@ -1942,29 +1940,148 @@ const localtransfer = async (req, res) => {
     await user.save();
     await receiver.save();
 
-    try {
-      const masterAdmins = await User.find({ role: "admin" });
-      const notification = {
-        text: `${user.email} transferred $${amount} to ${receiver.email} `,
-        type: "deposit",
-        date: Date.now(),
-        userId: user._id,
-        index: user.deposit.length - 1,
-        id: generateRandomString(),
-        amount: amount,
-      };
+    // Prepare email bodies
+    const senderEmailBody = `
+      <html>
+        <head>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              margin: 0;
+              padding: 0;
+              background-color: #f9f9f9;
+              color: #333;
+            }
+            .container {
+              max-width: 600px;
+              margin: 20px auto;
+              background-color: #fff;
+              border: 1px solid #ddd;
+              border-radius: 8px;
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+              overflow: hidden;
+            }
+            .header {
+              background-color: #0047ab;
+              color: #fff;
+              padding: 20px;
+              text-align: center;
+            }
+            .header h1 {
+              margin: 0;
+              font-size: 24px;
+            }
+            .content {
+              padding: 20px;
+              font-size: 16px;
+              line-height: 1.5;
+            }
+            .footer {
+              background-color: #f1f1f1;
+              padding: 10px 20px;
+              font-size: 14px;
+              text-align: center;
+              color: #555;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>Capital Surecrest</h1>
+            </div>
+            <div class="content">
+              <p>Dear ${user.username},</p>
+              <p>Your transfer of ${amount} to ${accountName} (${accountNumber}) was successful.</p>
+              <p>Thank you for choosing Capital Surecrest.</p>
+            </div>
+            <div class="footer">
+              &copy; ${new Date().getFullYear()} Capital Surecrest. All rights reserved.
+              <br />
+              Visit us at <a href="https://capitalsurecrest.com">capitalsurecrest.com</a>
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
 
-      for (const admin of masterAdmins) {
-        await User.findByIdAndUpdate(
-          admin._id, // The admin's ID
-          { $push: { notifications: notification } }, // Push the notification to the notifications array
-          { new: true } // Return the updated document
-        );
-      }
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ error: "Failed to notify admins" });
-    }
+    const receiverEmailBody = `
+      <html>
+        <head>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              margin: 0;
+              padding: 0;
+              background-color: #f9f9f9;
+              color: #333;
+            }
+            .container {
+              max-width: 600px;
+              margin: 20px auto;
+              background-color: #fff;
+              border: 1px solid #ddd;
+              border-radius: 8px;
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+              overflow: hidden;
+            }
+            .header {
+              background-color: #0047ab;
+              color: #fff;
+              padding: 20px;
+              text-align: center;
+            }
+            .header h1 {
+              margin: 0;
+              font-size: 24px;
+            }
+            .content {
+              padding: 20px;
+              font-size: 16px;
+              line-height: 1.5;
+            }
+            .footer {
+              background-color: #f1f1f1;
+              padding: 10px 20px;
+              font-size: 14px;
+              text-align: center;
+              color: #555;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>Capital Surecrest</h1>
+            </div>
+            <div class="content">
+              <p>Dear ${receiver.username},</p>
+              <p>You have received ${amount} from ${user.email}.</p>
+              <p>Thank you for choosing Capital Surecrest.</p>
+            </div>
+            <div class="footer">
+              &copy; ${new Date().getFullYear()} Capital Surecrest. All rights reserved.
+              <br />
+              Visit us at <a href="https://capitalsurecrest.com">capitalsurecrest.com</a>
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
+
+    // Send emails
+    await sendEmail(
+      user.email,
+      "Transfer Successful",
+      "Transfer Notification",
+      senderEmailBody
+    );
+    await sendEmail(
+      receiver.email,
+      "Credit Alert",
+      "Credit Notification",
+      receiverEmailBody
+    );
 
     return res.status(200).json({
       message: `Transfer of ${amount} to ${accountName} was successful`,
